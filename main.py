@@ -62,7 +62,7 @@ for epoch in range(1):
   # Train for one epoch, then validate
   train(trainset, model, criterion, optimizer, epoch, device)
   with torch.no_grad():
-    losses = validate(testingData, model, criterion, save_images, epoch)
+    losses = validate(testingData, model, criterion, save_images, epoch, device)
   # Save checkpoint and replace old best model if current model is better
   if losses < best_losses:
     best_losses = losses

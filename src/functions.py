@@ -29,7 +29,7 @@ def train(train_loader, model, criterion, optimizer, epoch, device):
     target = target.to(device)
     input_gray = input_gray.to(device)
     input_ab = input_ab.to(device)   
-     
+
 
     # Record time to load data (above)
     data_time.update(time.time() - end)
@@ -58,9 +58,7 @@ def train(train_loader, model, criterion, optimizer, epoch, device):
 
   print('Finished training epoch {}'.format(epoch))
 
-def validate(val_loader, model, criterion, save_images, epoch):
-  import torch
-  use_gpu = torch.cuda.is_available()
+def validate(val_loader, model, criterion, save_images, epoch, device):
   model.eval()
 
   # Prepare value counters and timers
@@ -68,11 +66,14 @@ def validate(val_loader, model, criterion, save_images, epoch):
 
   end = time.time()
   already_saved_images = False
-  for i, (input_gray, input_ab, target) in enumerate(val_loader):
+  for i, (target, input_gray, input_ab) in enumerate(val_loader):
     data_time.update(time.time() - end)
 
-    # Use GPU
-    if use_gpu: input_gray, input_ab, target = input_gray.cuda(), input_ab.cuda(), target.cuda()
+    # Use GPU if available
+    target = target.to(device)
+    input_gray = input_gray.to(device)
+    input_ab = input_ab.to(device)   
+
 
     # Run model and record loss
     output_ab = model(input_gray) # throw away class predictions
