@@ -58,7 +58,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=0.0)
 
 save_images = True
 best_losses = 1e10
-epochs = args.ep
+epochs = args.e
 print(f"Epochs {epochs}")
 
 # Train model
