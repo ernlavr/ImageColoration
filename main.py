@@ -45,6 +45,10 @@ for rgb, gray, ab in trainset:
     pass
 
 model = src.network.eccv16()
+if(device is not "cpu"):
+  print(f"Pushing model to CUDA")
+  model.cuda()
+
 criterion = nn.MSELoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=0.0)
 
