@@ -9,7 +9,8 @@
             "type": "python",
             "request": "launch",
             "program": "/home/ernests/Documents/Personal/ImageColoration/main.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "args": ["-e", "1"]
         }
     ]
 }

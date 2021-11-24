@@ -16,6 +16,12 @@ from src.functions import *
 import src.Dataset as ds
 
 import src.network
+import argparse
+
+parser = argparse.ArgumentParser()
+
+parser.add_argument('-e', type=int)
+args = parser.parse_args()
 
 # Set the device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -52,7 +58,8 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=0.0)
 
 save_images = True
 best_losses = 1e10
-epochs = 100
+epochs = args.ep
+print(f"Epochs {epochs}")
 
 # Train model
 for epoch in range(100):
