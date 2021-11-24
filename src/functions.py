@@ -17,10 +17,6 @@ def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   color_image = lab2rgb(color_image.astype(np.float64))
   grayscale_input = grayscale_input.squeeze().numpy()
 
-  cv2.imshow('RGB', color_image)
-  cv2.waitKey(0)
-  cv2.destroyAllWindows()
-
   if save_path is not None and save_name is not None: 
     # Check if grayscale/colorized dirs exist if not the save that shit duh ヽ(͡◕ ͜ʖ ͡◕)ﾉ 
     pathlib.Path(save_path['grayscale']).mkdir(parents=True, exist_ok=True) 
