@@ -1,13 +1,14 @@
 import time
 import numpy as np
 import matplotlib as plt
+import matplotlib.pyplot
 import torch
 from skimage.color import lab2rgb, rgb2lab, rgb2gray
 
 def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   '''Show/save rgb image from grayscale and ab channels
      Input save_path in the form {'grayscale': '/path/', 'colorized': '/path/'}'''
-  plt.clf() # clear matplotlib 
+  matplotlib.pyplot.clf()
   color_image = torch.cat((grayscale_input, ab_input), 0).numpy() # combine channels
   color_image = color_image.transpose((1, 2, 0))  # rescale for matplotlib
   color_image[:, :, 0:1] = color_image[:, :, 0:1] * 100
