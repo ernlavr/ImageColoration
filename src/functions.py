@@ -2,6 +2,7 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
+import pathlib
 from skimage.color import lab2rgb, rgb2lab, rgb2gray
 
 def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
@@ -15,6 +16,7 @@ def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   color_image = lab2rgb(color_image.astype(np.float64))
   grayscale_input = grayscale_input.squeeze().numpy()
   if save_path is not None and save_name is not None: 
+    pathlib.Path(save_path).mkdir(parents=True, exist_ok=True) 
     plt.imsave(arr=grayscale_input, fname='{}{}'.format(save_path['grayscale'], save_name), cmap='gray')
     plt.imsave(arr=color_image, fname='{}{}'.format(save_path['colorized'], save_name))
 
