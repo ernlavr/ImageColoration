@@ -19,7 +19,7 @@ import src.network
 
 # Set the device
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-print(f"{torch.cuda.current_device()}; device: {device}")
+print(f"{device}; device: {device}")
 
 
 # Hyperparameters
@@ -41,11 +41,8 @@ trainSet, testSet = torch.utils.data.random_split(dataset, [trainLen, testLen])
 trainset = torch.utils.data.DataLoader(trainSet, batch_size=10, shuffle=True)
 testingData = torch.utils.data.DataLoader(testSet, batch_size=10, shuffle=True)
 
-for rgb, gray, ab in trainset:
-    pass
-
 model = src.network.eccv16()
-if(device is not "cpu"):
+if(device.type != 'cpu'):
   print(f"Pushing model to CUDA")
   model.cuda()
 
@@ -58,7 +55,7 @@ best_losses = 1e10
 epochs = 100
 
 # Train model
-for epoch in range(1):
+for epoch in range(100):
   # Train for one epoch, then validate
   train(trainset, model, criterion, optimizer, epoch, device)
   with torch.no_grad():
@@ -66,4 +63,5 @@ for epoch in range(1):
   # Save checkpoint and replace old best model if current model is better
   if losses < best_losses:
     best_losses = losses
+    pathlib.Path('checkpoints').mkdir(parents=True, exist_ok=True) 
     torch.save(model.state_dict(), 'checkpoints/model-epoch-{}-losses-{:.3f}.pth'.format(epoch+1,losses))
