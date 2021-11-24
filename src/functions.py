@@ -79,7 +79,6 @@ def train(train_loader, model, criterion, optimizer, epoch, device):
         'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
             epoch, i, len(train_loader), batch_time=batch_time,
             data_time=data_time, loss=losses)) 
-    break
 
   print('Finished training epoch {}'.format(epoch))
 
