@@ -13,7 +13,7 @@ class AverageMeter(object):
     self.avg = self.sum / self.count
 
 
-def train(train_loader, model, criterion, optimizer, epoch):
+def train(train_loader, model, criterion, optimizer, epoch, device):
   import torch
   use_gpu = torch.cuda.is_available()
   print(f'Starting training epoch {epoch} and using GPU: {use_gpu}')
@@ -26,7 +26,10 @@ def train(train_loader, model, criterion, optimizer, epoch):
   for i, (target, input_gray, input_ab) in enumerate(train_loader):
     
     # Use GPU if available
-    if use_gpu: input_gray, input_ab, target = input_gray.cuda(), input_ab.cuda(), target.cuda()
+    target = target.to(device)
+    input_gray = input_gray.to(device)
+    input_ab = input_ab.to(device)   
+     
 
     # Record time to load data (above)
     data_time.update(time.time() - end)

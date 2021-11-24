@@ -18,7 +18,8 @@ import src.Dataset as ds
 import src.network
 
 # Set the device
-print(torch.cuda.current_device())
+device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+print(f"{torch.cuda.current_device()}; device: {device}")
 
 
 # Hyperparameters
@@ -55,7 +56,7 @@ epochs = 100
 # Train model
 for epoch in range(1):
   # Train for one epoch, then validate
-  train(trainset, model, criterion, optimizer, epoch)
+  train(trainset, model, criterion, optimizer, epoch, device)
   with torch.no_grad():
     losses = validate(testingData, model, criterion, save_images, epoch)
   # Save checkpoint and replace old best model if current model is better
