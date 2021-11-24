@@ -16,7 +16,7 @@ class AverageMeter(object):
 def train(train_loader, model, criterion, optimizer, epoch):
   import torch
   use_gpu = torch.cuda.is_available()
-  print('Starting training epoch {}'.format(epoch))
+  print(f'Starting training epoch {epoch} and using GPU: {use_gpu}')
   model.train()
   
   # Prepare value counters and timers

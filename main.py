@@ -18,6 +18,7 @@ import src.Dataset as ds
 import src.network
 
 # Set the device
+print(torch.cuda.current_device())
 
 
 # Hyperparameters
