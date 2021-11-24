@@ -1,4 +1,14 @@
 import time
+import numpy as np
+
+def is_rgb(img):
+    return len(img.shape) == 3 and img.shape[2] == 3
+
+def to_rgb(img):
+    if is_rgb(img):
+        return img
+    else:
+        return np.dstack((img,) * 3)
 
 class AverageMeter(object):
   '''A handy class from the PyTorch ImageNet tutorial''' 
