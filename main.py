@@ -21,6 +21,7 @@ import argparse
 parser = argparse.ArgumentParser()
 
 parser.add_argument('-e', type=int)
+parser.add_argument('-b', action='store_true')
 args = parser.parse_args()
 
 # Set the device
@@ -59,12 +60,13 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=0.0)
 save_images = True
 best_losses = 1e10
 epochs = args.e
+b = args.b
 print(f"Epochs {epochs}")
 
 # Train model
 for epoch in range(epochs):
   # Train for one epoch, then validate
-  train(trainset, model, criterion, optimizer, epoch, device)
+  train(trainset, model, criterion, optimizer, epoch, device, args.b)
   with torch.no_grad():
     losses = validate(testingData, model, criterion, save_images, epoch, device)
   # Save checkpoint and replace old best model if current model is better

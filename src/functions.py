@@ -40,7 +40,7 @@ class AverageMeter(object):
     self.avg = self.sum / self.count
 
 
-def train(train_loader, model, criterion, optimizer, epoch, device):
+def train(train_loader, model, criterion, optimizer, epoch, device, brk):
   import torch
   use_gpu = torch.cuda.is_available()
   print(f'Starting training epoch {epoch} and using GPU: {use_gpu}')
@@ -82,7 +82,8 @@ def train(train_loader, model, criterion, optimizer, epoch, device):
         'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
             epoch, i, len(train_loader), batch_time=batch_time,
             data_time=data_time, loss=losses)) 
-    if(i == 1):
+    if(brk and i == 1):
+      print("Breaking after first iteration")
       break
 
   print('Finished training epoch {}'.format(epoch))
