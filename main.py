@@ -62,7 +62,7 @@ epochs = args.e
 print(f"Epochs {epochs}")
 
 # Train model
-for epoch in range(100):
+for epoch in range(epochs):
   # Train for one epoch, then validate
   train(trainset, model, criterion, optimizer, epoch, device)
   with torch.no_grad():
