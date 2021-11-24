@@ -25,7 +25,7 @@ def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
     # Export images
     plt.imsave(arr=grayscale_input, fname='{}{}'.format(save_path['grayscale'], save_name), cmap='gray')
     plt.imsave(arr=color_image, fname='{}{}'.format(save_path['colorized'], save_name))
-    cv2.imwrite(f"{save_path['colorized']}CV_{save_name}", color_image) 
+    cv2.imwrite(f"{save_path['colorized']}CV_{save_name}", color_image * 255) 
 
 class AverageMeter(object):
   '''A handy class from the PyTorch ImageNet tutorial''' 
@@ -82,6 +82,8 @@ def train(train_loader, model, criterion, optimizer, epoch, device):
         'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
             epoch, i, len(train_loader), batch_time=batch_time,
             data_time=data_time, loss=losses)) 
+    if(i == 1):
+      break
 
   print('Finished training epoch {}'.format(epoch))
 
