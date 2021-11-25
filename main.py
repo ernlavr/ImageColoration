@@ -11,12 +11,27 @@ from torch.utils.data.dataset import Dataset
 import torch.nn as nn
 import torchvision
 from torchvision import transforms, datasets
+from torch.nn.functional import log_softmax
 
 from src.functions import *
 import src.Dataset as ds
 
 import src.network
 import argparse
+
+class CrossEntropyLoss2d(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+    def forward(self, outputs, labels):
+        softmax = log_softmax(outputs, dim=1)
+
+        norm = labels.clone()
+
+        norm[norm != 0] = torch.log(norm[norm != 0])
+
+        return -torch.sum((softmax - norm) * labels) / outputs.shape[0]
+
 
 parser = argparse.ArgumentParser()
 
@@ -53,7 +68,7 @@ if(device.type != 'cpu'):
   print(f"Pushing model to CUDA")
   model.cuda()
 
-criterion = nn.MSELoss()
+criterion = CrossEntropyLoss2d()
 optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=0.0)
 
 

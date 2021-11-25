@@ -16,22 +16,18 @@ def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
 
   color_image = torch.cat((grayscale_input, ab_input), 0).numpy() # combine channels
   color_image = color_image.transpose((1, 2, 0))  # rescale for matplotlib
-  cv2.imwrite(f"{save_path['colorized']}CV2_{save_name}", color_image * 255) 
 
   color_image[:, :, 0:1] = color_image[:, :, 0:1] * 100
-  
   color_image[:, :, 1:3] = color_image[:, :, 1:3] * 255 - 128   
-  
-  color_image = lab2rgb(color_image.astype(np.float64))
+
+  color_image_RGB = cv2.cvtColor(color_image, cv2.COLOR_LAB2BGR)
   grayscale_input = grayscale_input.squeeze().numpy()
 
   if save_path is not None and save_name is not None: 
-    
-
     # Export images
     plt.imsave(arr=grayscale_input, fname='{}{}'.format(save_path['grayscale'], save_name), cmap='gray')
-    plt.imsave(arr=color_image, fname='{}{}'.format(save_path['colorized'], save_name))
-    cv2.imwrite(f"{save_path['colorized']}CV_{save_name}", color_image * 255) 
+    plt.imsave(arr=color_image_RGB, fname='{}{}'.format(save_path['colorized'], save_name))
+    cv2.imwrite(f"{save_path['colorized']}CV_{save_name}", color_image_RGB * 255) 
 
 class AverageMeter(object):
   '''A handy class from the PyTorch ImageNet tutorial''' 
