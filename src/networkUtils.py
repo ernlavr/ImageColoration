@@ -1,15 +1,11 @@
 import time
 import numpy as np
-import matplotlib.pyplot as plt
-import torch
 import pathlib
-from skimage.color import lab2rgb, rgb2lab, rgb2gray
 import cv2
 
 def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   '''Show/save rgb image from grayscale and ab channels
      Input save_path in the form {'grayscale': '/path/', 'colorized': '/path/'}'''
-  plt.clf()
   # Check if grayscale/colorized dirs exist if not the save that shit duh ヽ(͡◕ ͜ʖ ͡◕)ﾉ 
   pathlib.Path(save_path['grayscale']).mkdir(parents=True, exist_ok=True) 
   pathlib.Path(save_path['colorized']).mkdir(parents=True, exist_ok=True) 
