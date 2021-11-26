@@ -5,11 +5,23 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "main.py",
             "type": "python",
             "request": "launch",
             "program": "/home/ernests/Documents/Personal/ImageColoration/main.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "args": [
+                "-e",
+                "1",
+                "-b"
+            ]
         }
     ]
 }

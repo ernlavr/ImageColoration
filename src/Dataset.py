@@ -26,26 +26,32 @@ class ImageDataset(Dataset):
                  resize=256,
                  transform=None):
 
-        self.imgDirFullPath : str   = os.path.join(os.getcwd(), imgDir)
-        self.images = []
+        self.imgDir : str   = os.path.join(os.getcwd(), imgDir)
+        self.images : Image = []
         self.transform = transform
         self.dim = resize
         self.populateImageList()
 
     def populateImageList(self):
-        for root, directories, files in os.walk(self.imgDirFullPath):
+        """[summary] Recursively populates images collection from the given image directory
+        """
+        for root, directories, files in os.walk(self.imgDir):
             for file in files:
                 filePath = os.path.join(root, file)
 
+                # Read and resize original RGB pic
                 img = cv2.imread(filePath)
                 img = cv2.resize(img, (self.dim, self.dim))
 
+                # Get Gray and LAB versions
                 imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                imgLAB = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+                L, A, B = cv2.split(imgLAB)
+                AB = cv2.merge((A, B))
 
-                img1 = cv2.cvtColor(img, cv2.COLOR_RGB2LAB)
-                AB = img[:, :, 1:3]
-
-                entry = Image(img, imgGray, img[:, :, 1:3])
+                # Fill an entry with RGB, imgGray and AB target
+                # To get original image, merge imgGray + AB -> LAB2BGR
+                entry = Image(img, imgGray, AB)
                 self.images.append(entry)
         self.images = np.asarray(self.images)
 
@@ -56,8 +62,8 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, index):
         if self.transform is not None:
-            rgb = self.images[index].colorData
-            gray = self.images[index].grayData
+            rgb = self.images[index].RGB
+            gray = self.images[index].Gray
             ab = self.images[index].AB
 
             rgb = self.transform(rgb)

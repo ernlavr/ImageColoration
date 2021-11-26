@@ -3,48 +3,39 @@ import numpy as np
 import matplotlib.pyplot as plt
 import torch
 import pathlib
-from skimage import color, io, transform
 from skimage.color import lab2rgb, rgb2lab, rgb2gray
-
-
-def lab_to_rgb(img):
-  assert img.dtype == np.float32
-  return (255 * np.clip(color.lab2rgb(img), 0, 1)).astype(np.uint8)
-
-def torch_to_numpy(batch):
-  return batch[:, :, :].cpu().numpy().transpose(1, 2, 0)
-
-def resize(img, size):
-  res = transform.resize(img, size, mode='reflect', anti_aliasing=True)
-
-  if img.dtype == np.uint8:
-      res *= 255
-
-  return res.astype(img.dtype)
-
+import cv2
 
 def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   '''Show/save rgb image from grayscale and ab channels
      Input save_path in the form {'grayscale': '/path/', 'colorized': '/path/'}'''
   plt.clf()
-  
-  l = torch_to_numpy(grayscale_input)
-  ab = resize(torch_to_numpy(ab_input), l.shape[:2])
+  # Check if grayscale/colorized dirs exist if not the save that shit duh ヽ(͡◕ ͜ʖ ͡◕)ﾉ 
+  pathlib.Path(save_path['grayscale']).mkdir(parents=True, exist_ok=True) 
+  pathlib.Path(save_path['colorized']).mkdir(parents=True, exist_ok=True) 
 
-  out_img = lab_to_rgb(np.dstack((l, ab)))
+  # Converts tensors to numpy arrays
+  npGray = grayscale_input.numpy()
+  npAB = ab_input.numpy()
 
+  # Merge luminance with AB
+  LAB = np.concatenate((npGray, npAB), axis=0) 
+  LAB = LAB.transpose((1, 2, 0)) # Shifts it from (3, 256, 256) to (256, 256, 3)
+
+  # Convert to RGB colorspace and normalize (cv2.imwrite requires integers 0-255)
+  RGB = cv2.cvtColor(LAB, cv2.COLOR_LAB2BGR)
+  RGB = RGB/(RGB.max()/255.0)
 
   if save_path is not None and save_name is not None: 
-    # Check if grayscale/colorized dirs exist if not the save that shit duh ヽ(͡◕ ͜ʖ ͡◕)ﾉ 
-    pathlib.Path(save_path['grayscale']).mkdir(parents=True, exist_ok=True) 
-    pathlib.Path(save_path['colorized']).mkdir(parents=True, exist_ok=True) 
-
-    # Export images
-    plt.imsave(arr=out_img, fname='{}{}'.format(save_path['colorized'], save_name))
-    plt.imsave(arr=l, fname='{}{}'.format(save_path['grayscale'], save_name), cmap='gray')
+    # Export image
+    cv2.imwrite(f"{save_path['colorized']}RGBd{save_name}", RGB) 
 
 class AverageMeter(object):
-  '''A handy class from the PyTorch ImageNet tutorial''' 
+  """ Computes and stores the average and current value
+      A handy class from the PyTorch ImageNet tutorial
+      https://github.com/pytorch/examples/blob/master/imagenet/main.py#L199
+  """
+  
   def __init__(self):
     self.reset()
   def reset(self):
@@ -56,11 +47,22 @@ class AverageMeter(object):
     self.avg = self.sum / self.count
 
 
-def train(train_loader, model, criterion, optimizer, epoch, device):
-  import torch
-  use_gpu = torch.cuda.is_available()
-  print(f'Starting training epoch {epoch} and using GPU: {use_gpu}')
+def train(train_loader, model, criterion, optimizer, epoch, device, brk):
+  """Function for training the model
+
+  Args:
+      train_loader (Dataset): training dataset
+      model (nn.module): Neural network
+      criterion (torch.nn._Loss): Loss function
+      optimizer (torch.nn.Optim): Optimizer
+      epoch (int): Current epoch
+      device (str): Either 'cpu' or 'gpu'
+      brk (boolean): Break after first datapoint is processed. Used for debuggin on CPU
+  """
+
+  # Put the model in training mode
   model.train()
+  print(f'Starting training epoch {epoch} and using device: {device}')
   
   # Prepare value counters and timers
   batch_time, data_time, losses = AverageMeter(), AverageMeter(), AverageMeter()
@@ -68,11 +70,10 @@ def train(train_loader, model, criterion, optimizer, epoch, device):
   end = time.time()
   for i, (target, input_gray, input_ab) in enumerate(train_loader):
     
-    # Use GPU if available
+    # Push the target, grayscale and AB tensors to CPU/GPU
     target = target.to(device)
     input_gray = input_gray.to(device)
     input_ab = input_ab.to(device)   
-
 
     # Record time to load data (above)
     data_time.update(time.time() - end)
@@ -98,7 +99,11 @@ def train(train_loader, model, criterion, optimizer, epoch, device):
         'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
             epoch, i, len(train_loader), batch_time=batch_time,
             data_time=data_time, loss=losses)) 
-    break
+    
+    # For quick debugging on CPU..
+    if(brk and i == 1):
+      print("Breaking after first iteration")
+      break
 
   print('Finished training epoch {}'.format(epoch))
 
