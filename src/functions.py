@@ -26,11 +26,10 @@ def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   grayscale_input = grayscale_input.squeeze().numpy()
 
   if save_path is not None and save_name is not None: 
-    
-
     # Export images
     plt.imsave(arr=grayscale_input, fname='{}{}'.format(save_path['grayscale'], save_name), cmap='gray')
     plt.imsave(arr=color_image, fname='{}{}'.format(save_path['colorized'], save_name))
+    color_image = color_image.transpose((2, 1, 0))  # rescale for matplotlib
     cv2.imwrite(f"{save_path['colorized']}CV_{save_name}", color_image * 255) 
 
 class AverageMeter(object):
