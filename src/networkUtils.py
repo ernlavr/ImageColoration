@@ -100,7 +100,9 @@ def train(train_loader, model, criterion, optimizer, epoch, device, brk):
 
     # Run forward pass
     output_ab = model(input_gray) 
-    loss = criterion(output_ab, input_ab) 
+    outputLoss = scaleTensor(output_ab.cpu(), 255).to(device)
+    inputLoss = scaleTensor(input_ab.cpu(), 255).to(device)
+    loss = criterion(outputLoss, inputLoss) 
     losses.update(loss.item(), input_gray.size(0))
 
     # Compute gradient and optimize
