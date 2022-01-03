@@ -83,17 +83,17 @@ def train(train_loader, model, criterion, optimizer, epoch, device, brk):
     input_gray  : torch.Tensor = input_gray.to(device)
     input_ab    : torch.Tensor = input_ab.to(device)   
 
-    print(f"{torch.max(target)} {torch.min(target)}")
-    print(f"{torch.max(input_gray)} {torch.min(input_gray)}")
-    print(f"{torch.max(input_ab)} {torch.min(input_ab)}")
+    # print(f"{torch.max(target)} {torch.min(target)}")
+    # print(f"{torch.max(input_gray)} {torch.min(input_gray)}")
+    # print(f"{torch.max(input_ab)} {torch.min(input_ab)}")
 
-    target = scaleTensor(target.cpu(), 255).to(device)
-    input_gray = scaleTensor(input_gray.cpu(), 255).to(device)
-    input_ab = scaleTensor(input_ab.cpu(), 255).to(device)
+    # target = scaleTensor(target.cpu(), 255).to(device)
+    # input_gray = scaleTensor(input_gray.cpu(), 255).to(device)
+    # input_ab = scaleTensor(input_ab.cpu(), 255).to(device)
 
-    print(f"{torch.max(target)} {torch.min(target)}")
-    print(f"{torch.max(input_gray)} {torch.min(input_gray)}")
-    print(f"{torch.max(input_ab)} {torch.min(input_ab)}")
+    # print(f"{torch.max(target)} {torch.min(target)}")
+    # print(f"{torch.max(input_gray)} {torch.min(input_gray)}")
+    # print(f"{torch.max(input_ab)} {torch.min(input_ab)}")
 
     # Record time to load data (above)
     data_time.update(time.time() - end)
