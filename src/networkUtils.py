@@ -2,7 +2,6 @@ import time
 import numpy as np
 import pathlib
 import cv2
-import torch
 
 def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   '''Show/save rgb image from grayscale and ab channels
@@ -15,14 +14,8 @@ def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   npGray = grayscale_input.numpy()
   npAB = ab_input.numpy()
 
-<<<<<<< HEAD
-=======
-  npGray = npGray / (npGray.max() / 255.0)
-  npAB = npAB / (npAB.max() / 255.0)
-
->>>>>>> 0678c7bceb30ba627827c3eb5b2c860581f3b157
-  npAB *= 255.0/npAB.max()
-  npAB_scaled = npAB - 110
+  npGray = npGray / (npGray.max() / 255.0) - 100
+  npAB = npAB / (npAB.max() / 255.0) - 110
 
   # Merge luminance with AB
   LAB = np.concatenate((npGray, npAB), axis=0) 
@@ -52,17 +45,6 @@ class AverageMeter(object):
     self.count += n
     self.avg = self.sum / self.count
 
-def scaleTensor(tensor, float):
-  """Scales a tensor's last two dimensions (colors) by the scalaer
-
-  Args:
-      tensor (torch.tensor): Tensor to scale
-      scalar (float): scalar
-  """
-  npScalar = np.full(tensor.shape, float, dtype=np.float32)
-  newTarget = tensor.detach().cpu() * npScalar[None, None, :, :]
-  return newTarget[0, 0, :, :, :, :]
-
 
 def train(train_loader, model, criterion, optimizer, epoch, device, brk):
   """Function for training the model
@@ -88,21 +70,9 @@ def train(train_loader, model, criterion, optimizer, epoch, device, brk):
   for i, (target, input_gray, input_ab) in enumerate(train_loader):
     
     # Push the target, grayscale and AB tensors to CPU/GPU
-    target      : torch.Tensor = target.to(device)
-    input_gray  : torch.Tensor = input_gray.to(device)
-    input_ab    : torch.Tensor = input_ab.to(device)   
-
-    print(f"{torch.max(target)} {torch.min(target)}")
-    print(f"{torch.max(input_gray)} {torch.min(input_gray)}")
-    print(f"{torch.max(input_ab)} {torch.min(input_ab)}")
-
-    target = scaleTensor(target, 255)
-    input_gray = scaleTensor(input_gray, 255)
-    input_ab = scaleTensor(input_ab, 255)
-
-    print(f"{torch.max(target)} {torch.min(target)}")
-    print(f"{torch.max(input_gray)} {torch.min(input_gray)}")
-    print(f"{torch.max(input_ab)} {torch.min(input_ab)}")
+    target = target.to(device)
+    input_gray = input_gray.to(device)
+    input_ab = input_ab.to(device)   
 
     # Record time to load data (above)
     data_time.update(time.time() - end)
