@@ -1,60 +1,69 @@
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+
+import cv2
+
 import torch
 import torch.utils.data
+from torch.utils.data.dataset import Dataset
+
+
 import torch.nn as nn
-from torchvision import transforms
+import torchvision
+from torchvision import transforms, datasets
+
+from src.networkUtils import *
+import src.Dataset as ds
+
+import src.network
 import argparse
 
-import src.Dataset as ds
-import src.network
-from src.networkUtils import *
-
-
-def parseArgs():
-  # Custom args for debugging..
+def getArgs():
   parser = argparse.ArgumentParser()
+  parser.add_argument('-e', type=int)
+  parser.add_argument('-b', action='store_true')
 
-  parser.add_argument('-e', type=int, help="Number of epochs")
-  parser.add_argument('-b', action='store_true', help="Automatically break after first batch.. Used for debugging CPU output")
   return parser.parse_args()
 
 def main():
-  # Get args
-  args = parseArgs()
+  # Get the command-line arguments
+  args = getArgs()
 
-  # Set either CPU or GPU as the computing engine
+  # Set the device
   device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-  print(f"Torch set to compute on device: {device}")
+  print(f"{device}; device: {device}")
 
-
-  # Specify transforms and initialize the dataset
-  trainingTransforms = transforms.Compose([transforms.ToTensor()])
+  # Load data
+  trainingTransforms = transforms.Compose([
+      transforms.ToTensor()
+  ])
   dataset = ds.ImageDataset("dummyData/ColorfulOriginal", transform=trainingTransforms)
 
   # Calculate 90%-10% for a split between train-test set
   dsLen = len(dataset)
   trainLen = int(dsLen * 0.9)
   testLen = dsLen - trainLen
-
-  # Split training and testing sets and create DataLoader object
   trainSet, testSet = torch.utils.data.random_split(dataset, [trainLen, testLen])
+
+  # Create DataLoader objects from the data sets
   trainset = torch.utils.data.DataLoader(trainSet, batch_size=10, shuffle=True)
   testingData = torch.utils.data.DataLoader(testSet, batch_size=10, shuffle=True)
 
-  # Initialize Neural Net object and push it to CUDA if available
   model = src.network.eccv16()
   if(device.type != 'cpu'):
     print(f"Pushing model to CUDA")
     model.cuda()
 
-  # Define loss function and optimizer
+
+  # TODO Implement pretrained weights from original author and my own model
   criterion = nn.MSELoss()
   optimizer = torch.optim.Adam(model.parameters(), lr=1e-2, weight_decay=0.0)
 
-  # Epochs, checkpoint condition, debugging..
   save_images = True
   best_losses = 1e10
   epochs = args.e
   b = args.b
+  print(f"Epochs {epochs}")
 
   # Train model
   for epoch in range(epochs):
@@ -62,7 +71,6 @@ def main():
     train(trainset, model, criterion, optimizer, epoch, device, args.b)
     with torch.no_grad():
       losses = validate(testingData, model, criterion, save_images, epoch, device)
-
     # Save checkpoint and replace old best model if current model is better
     if losses < best_losses:
       best_losses = losses
