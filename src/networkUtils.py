@@ -15,6 +15,12 @@ def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   npGray = grayscale_input.numpy()
   npAB = ab_input.numpy()
 
+<<<<<<< HEAD
+=======
+  npGray = npGray / (npGray.max() / 255.0)
+  npAB = npAB / (npAB.max() / 255.0)
+
+>>>>>>> 0678c7bceb30ba627827c3eb5b2c860581f3b157
   npAB *= 255.0/npAB.max()
   npAB_scaled = npAB - 110
 
