@@ -87,9 +87,9 @@ def train(train_loader, model, criterion, optimizer, epoch, device, brk):
     print(f"{torch.max(input_gray)} {torch.min(input_gray)}")
     print(f"{torch.max(input_ab)} {torch.min(input_ab)}")
 
-    target = scaleTensor(target, 255)
-    input_gray = scaleTensor(input_gray, 255)
-    input_ab = scaleTensor(input_ab, 255)
+    target = scaleTensor(target.cpu(), 255).to(device)
+    input_gray = scaleTensor(input_gray.cpu(), 255).to(device)
+    input_ab = scaleTensor(input_ab.cpu(), 255).to(device)
 
     print(f"{torch.max(target)} {torch.min(target)}")
     print(f"{torch.max(input_gray)} {torch.min(input_gray)}")
