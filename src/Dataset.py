@@ -43,6 +43,7 @@ class ImageDataset(Dataset):
                 img = cv2.imread(filePath)
                 img = cv2.resize(img, (self.dim, self.dim))
 
+
                 # Get Gray and LAB versions
                 imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 imgLAB = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)

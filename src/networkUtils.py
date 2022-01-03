@@ -15,6 +15,9 @@ def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   npGray = grayscale_input.numpy()
   npAB = ab_input.numpy()
 
+  npAB *= 255.0/npAB.max()
+  npAB_scaled = npAB - 110
+
   # Merge luminance with AB
   LAB = np.concatenate((npGray, npAB), axis=0) 
   LAB = LAB.transpose((1, 2, 0)) # Shifts it from (3, 256, 256) to (256, 256, 3)
@@ -51,7 +54,7 @@ def scaleTensor(tensor, float):
       scalar (float): scalar
   """
   npScalar = np.full(tensor.shape, float, dtype=np.float32)
-  newTarget = tensor * npScalar[None, None, :, :]
+  newTarget = tensor.detach().cpu() * npScalar[None, None, :, :]
   return newTarget[0, 0, :, :, :, :]
 
 
