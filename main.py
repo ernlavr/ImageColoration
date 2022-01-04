@@ -64,7 +64,10 @@ def getModel(args):
   model = src.network.eccv16()
   if args.pretrained is not None:
     if(os.path.exists(args.pretrained)):
-      model.load_state_dict(torch.load(args.pretrained))
+      if(torch.cuda.is_available() == False):  # Load in CPU mode
+        model.load_state_dict(torch.load(args.pretrained, map_location=torch.device('cpu')))  
+      else:                                    # Load in normal mode
+        model.load_state_dict(torch.load(args.pretrained))
       print(f"Loaded pretrained weights from path {args.pretrained}")
   
   return model
