@@ -29,7 +29,7 @@ def getDatasets(args):
 
   # Initialize the dataset
   trainingTransforms = transforms.Compose([transforms.ToTensor()])
-  dataset = ds.ImageDataset("dummyData/ColorfulOriginal", transform=trainingTransforms)
+  dataset = ds.ImageDataset("dummyData/NC_Dataset", transform=trainingTransforms)
 
   # Calculate 90%-10% for a split between train-test set
   dsLen = len(dataset)
@@ -98,7 +98,6 @@ def main():
   save_images = True
   best_losses = 1e10
   epochs = args.e
-  b = args.b
 
   # Just run the model and generate output..
   if(args.skip_training is True):
