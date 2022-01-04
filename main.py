@@ -101,7 +101,7 @@ def main():
   # Train model
   for epoch in range(epochs):
     # Train for one epoch, then validate
-    if(args.skip_training is None):
+    if(args.skip_training is False):
       train(trainSet, model, criterion, optimizer, epoch, device, args.b)
     with torch.no_grad():
       losses = validate(validationSet, model, criterion, save_images, epoch, device)
