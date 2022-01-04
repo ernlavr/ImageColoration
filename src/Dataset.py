@@ -51,7 +51,7 @@ class ImageDataset(Dataset):
 
                 # Fill an entry with RGB, imgGray and AB target
                 # To get original image, merge imgGray + AB -> LAB2BGR
-                entry = Image(img, imgGray, AB)
+                entry = Image(file, img, imgGray, AB)
                 self.images.append(entry)
         self.images = np.asarray(self.images)
 
