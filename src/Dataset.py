@@ -16,7 +16,8 @@ from skimage import io
 from skimage.color import rgb2lab, rgb2gray
 
 class ImageDataset(Dataset):
-    """[summary] Wrapper class for importing the custom data
+    """
+    Wrapper class for importing the custom data
     """
 
     def __init__(self,
@@ -33,8 +34,9 @@ class ImageDataset(Dataset):
         self.populateImageList()
 
     def populateImageList(self):
-        """[summary] Recursively populates images collection from the given image directory
+        """Recursively populates images collection from the given image directory
         """
+        
         for root, directories, files in os.walk(self.imgDir):
             for file in files:
                 filePath = os.path.join(root, file)

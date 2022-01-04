@@ -1,3 +1,8 @@
+"""
+Consists of utility functions for running the training/validation, 
+conversion to RGB and analytics
+"""
+
 import time
 import numpy as np
 import pathlib
