@@ -64,7 +64,7 @@ def train(train_loader, model, criterion, optimizer, epoch, device, brk):
   batch_time, data_time, losses = AverageMeter(), AverageMeter(), AverageMeter()
 
   end = time.time()
-  for i, (target, input_gray, input_ab) in enumerate(train_loader):
+  for i, (name, target, input_gray, input_ab) in enumerate(train_loader):
     
     # Push the target, grayscale and AB tensors to CPU/GPU
     target = target.to(device)
