@@ -71,7 +71,6 @@ def getModel(args):
       print(f"Loaded pretrained weights from path {args.pretrained}")
   
   return model
-
     
 
 def main():
@@ -101,20 +100,26 @@ def main():
   epochs = args.e
   b = args.b
 
-  # Train model
-  for epoch in range(epochs):
-    # Train for one epoch, then validate
-    if(args.skip_training is False):
-      train(trainSet, model, criterion, optimizer, epoch, device, args.b)
+  # Just run the model and generate output..
+  if(args.skip_training is True):
     with torch.no_grad():
-      losses = validate(validationSet, model, criterion, save_images, epoch, device)
+      losses = validate(validationSet, model, criterion, save_images, 0, device)
+  
+  # Train-Validate-Save...
+  else:
+    for epoch in range(epochs):
+      # Train for one epoch, then validate
+      train(trainSet, model, criterion, optimizer, epoch, device, args.b)
+      with torch.no_grad():
+        losses = validate(validationSet, model, criterion, save_images, epoch, device)
 
-    # Save checkpoint and replace old best model if current model is better
-    if losses < best_losses:
-      best_losses = losses
-      pathlib.Path('checkpoints').mkdir(parents=True, exist_ok=True) 
-      torch.save(model.state_dict(), 
-                'checkpoints/model-epoch-{}-losses-{:.3f}.pth'.format(epoch+1,losses))
+      # Save checkpoint and replace old best model if current model is better
+      if losses < best_losses:
+        best_losses = losses
+        pathlib.Path('checkpoints').mkdir(parents=True, exist_ok=True) 
+        torch.save(model.state_dict(), 
+                  'checkpoints/model-epoch-{}-losses-{:.3f}.pth'.format(epoch+1,losses))
+    
 
 if __name__ == '__main__':
   main()

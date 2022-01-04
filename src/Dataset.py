@@ -62,6 +62,7 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, index):
         if self.transform is not None:
+            name = self.images[index].Name
             rgb = self.images[index].RGB
             gray = self.images[index].Gray
             ab = self.images[index].AB
@@ -70,4 +71,4 @@ class ImageDataset(Dataset):
             gray = self.transform(gray)
             ab = self.transform(ab)
 
-            return rgb, gray, ab
+            return name, rgb, gray, ab
