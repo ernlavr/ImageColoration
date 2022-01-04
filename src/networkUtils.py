@@ -1,3 +1,8 @@
+"""
+Consists of utility functions for running the training/validation, 
+conversion to RGB and analytics
+"""
+
 import time
 import numpy as np
 import pathlib
@@ -14,7 +19,7 @@ def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   npGray = grayscale_input.numpy()
   npAB = ab_input.numpy()
 
-  # Merge luminance with AB
+  # Merge luminance/chrominance
   LAB = np.concatenate((npGray, npAB), axis=0) 
   LAB = LAB.transpose((1, 2, 0)) # Shifts it from (3, 256, 256) to (256, 256, 3)
 
@@ -64,7 +69,7 @@ def train(train_loader, model, criterion, optimizer, epoch, device, brk):
   batch_time, data_time, losses = AverageMeter(), AverageMeter(), AverageMeter()
 
   end = time.time()
-  for i, (target, input_gray, input_ab) in enumerate(train_loader):
+  for i, (name, target, input_gray, input_ab) in enumerate(train_loader):
     
     # Push the target, grayscale and AB tensors to CPU/GPU
     target = target.to(device)
@@ -110,8 +115,8 @@ def validate(val_loader, model, criterion, save_images, epoch, device):
   batch_time, data_time, losses = AverageMeter(), AverageMeter(), AverageMeter()
 
   end = time.time()
-  already_saved_images = False
-  for i, (target, input_gray, input_ab) in enumerate(val_loader):
+  tst = enumerate(val_loader)
+  for i, (name, target, input_gray, input_ab) in enumerate(val_loader):
     data_time.update(time.time() - end)
 
     # Use GPU if available
@@ -126,12 +131,13 @@ def validate(val_loader, model, criterion, save_images, epoch, device):
     losses.update(loss.item(), input_gray.size(0))
 
     # Save images to file
-    if save_images and not already_saved_images:
-      already_saved_images = True
-      for j in range(min(len(output_ab), 10)): # save at most 5 images
-        save_path = {'grayscale': 'outputs/gray/', 'colorized': 'outputs/color/'}
-        save_name = 'img-{}-epoch-{}.jpg'.format(i * val_loader.batch_size + j, epoch)
-        to_rgb(input_gray[j].cpu(), ab_input=output_ab[j].detach().cpu(), save_path=save_path, save_name=save_name)
+    for j in range(min(len(output_ab), 10)): # save at most 5 images
+      save_path = {'grayscale': 'outputs/gray/', 'colorized': 'outputs/color/'}
+      save_name = 'img-{}epoch-{}-{}'.format(j, epoch, name[j])
+      to_rgb(input_gray[j].cpu(), 
+            ab_input=output_ab[j].detach().cpu(), 
+            save_path=save_path, 
+            save_name=save_name)
 
     # Record time to do forward passes and save images
     batch_time.update(time.time() - end)

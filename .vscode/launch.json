@@ -22,6 +22,21 @@
                 "1",
                 "-b"
             ]
+        },
+        {
+            "name": "ValidatePreload",
+            "type": "python",
+            "request": "launch",
+            "program": "/home/ernests/Documents/Personal/PythonScripts/ImageColoration/main.py",
+            "console": "integratedTerminal",
+            "args": [
+                "-e", "1",
+                "-b",
+                "--ts", "NC_Dataset/Training/",
+                "--vs", "NC_Dataset/Validation/",
+                "--pretrained", "checkpoints/model.pth",
+                "--skip_training"
+            ]
         }
     ]
 }

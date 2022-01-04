@@ -16,7 +16,8 @@ from skimage import io
 from skimage.color import rgb2lab, rgb2gray
 
 class ImageDataset(Dataset):
-    """[summary] Wrapper class for importing the custom data
+    """
+    Wrapper class for importing the custom data
     """
 
     def __init__(self,
@@ -33,8 +34,9 @@ class ImageDataset(Dataset):
         self.populateImageList()
 
     def populateImageList(self):
-        """[summary] Recursively populates images collection from the given image directory
+        """Recursively populates images collection from the given image directory
         """
+        
         for root, directories, files in os.walk(self.imgDir):
             for file in files:
                 filePath = os.path.join(root, file)
@@ -51,7 +53,7 @@ class ImageDataset(Dataset):
 
                 # Fill an entry with RGB, imgGray and AB target
                 # To get original image, merge imgGray + AB -> LAB2BGR
-                entry = Image(img, imgGray, AB)
+                entry = Image(file, img, imgGray, AB)
                 self.images.append(entry)
         self.images = np.asarray(self.images)
 
@@ -62,6 +64,7 @@ class ImageDataset(Dataset):
 
     def __getitem__(self, index):
         if self.transform is not None:
+            name = self.images[index].Name
             rgb = self.images[index].RGB
             gray = self.images[index].Gray
             ab = self.images[index].AB
@@ -70,4 +73,4 @@ class ImageDataset(Dataset):
             gray = self.transform(gray)
             ab = self.transform(ab)
 
-            return rgb, gray, ab
+            return name, rgb, gray, ab

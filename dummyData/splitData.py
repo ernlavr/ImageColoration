@@ -1,3 +1,9 @@
+#!/usr/bin/python3
+
+"""
+[Depricated] Auxiliary script for splitting datasets.
+"""
+
 import os
 import shutil
 import PIL
