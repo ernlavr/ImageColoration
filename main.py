@@ -46,11 +46,13 @@ def getDatasets(args):
     if(os.path.exists(args.ts)):
       set = ds.ImageDataset(args.ts, transform=trainingTransforms)
       trainSet = torch.utils.data.DataLoader(set, batch_size=10, shuffle=True)
+      print(f"Loaded training set from {args.ts}")
   
   if args.vs is not None:
     if(os.path.exists(args.vs)):
       set = ds.ImageDataset(args.vs, transform=trainingTransforms)
       valSet = torch.utils.data.DataLoader(set, batch_size=10, shuffle=True)
+      print(f"Loaded validation set from {args.vs}")
 
   return trainSet, valSet
 
