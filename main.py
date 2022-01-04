@@ -15,10 +15,10 @@ def parseArgs():
   parser = argparse.ArgumentParser()
 
   parser.add_argument('-e', type=int, help="Number of epochs")
+  parser.add_argument('-b', action='store_true', help="Automatically break after first batch.. Used for debugging CPU output")
   parser.add_argument('--ts', type=str, help="Specify relative path to a training set folder")
   parser.add_argument('--vs', type=str, help="Specify relative path to a validation set folder")
   parser.add_argument('--pretrained', type=str, help="Indicates to use a pre-trained weight")
-  parser.add_argument('-b', action='store_true', help="Automatically break after first batch.. Used for debugging CPU output")
   parser.add_argument('--skip_training', action='store_true', help="Proceed straight to validation")
   return parser.parse_args()
 
@@ -42,13 +42,15 @@ def getDatasets(args):
   valSet = torch.utils.data.DataLoader(valSet, batch_size=10, shuffle=True)
 
   # Overwrite the dummy-data with pre-specified datasets if applicable. Inefficient but simple..
-  if(os.path.exists(args.ts)):
-    set = ds.ImageDataset(args.ts, transform=trainingTransforms)
-    trainSet = torch.utils.data.DataLoader(set, batch_size=10, shuffle=True)
-
-  if(os.path.exists(args.vs)):
-    set = ds.ImageDataset(args.vs, transform=trainingTransforms)
-    valSet = torch.utils.data.DataLoader(set, batch_size=10, shuffle=True)
+  if args.ts is not None:
+    if(os.path.exists(args.ts)):
+      set = ds.ImageDataset(args.ts, transform=trainingTransforms)
+      trainSet = torch.utils.data.DataLoader(set, batch_size=10, shuffle=True)
+  
+  if args.vs is not None:
+    if(os.path.exists(args.vs)):
+      set = ds.ImageDataset(args.vs, transform=trainingTransforms)
+      valSet = torch.utils.data.DataLoader(set, batch_size=10, shuffle=True)
 
   return trainSet, valSet
 
@@ -58,9 +60,10 @@ def getModel(args):
      or blank model if without
   """
   model = src.network.eccv16()
-  if(os.path.exists(args.pretrained)):
-    model.load_state_dict(torch.load(args.pretrained))
-    print(f"Loaded pretrained weights from path {args.pretrained}")
+  if args.pretrained is not None:
+    if(os.path.exists(args.pretrained)):
+      model.load_state_dict(torch.load(args.pretrained))
+      print(f"Loaded pretrained weights from path {args.pretrained}")
   
   return model
 
