@@ -102,7 +102,7 @@ def main():
   # Just run the model and generate output..
   if(args.skip_training is True):
     with torch.no_grad():
-      losses = validate(validationSet, model, criterion, save_images, 0, device)
+      losses = validate(validationSet, model, criterion, save_images, epochs, device)
   
   # Train-Validate-Save...
   else:
