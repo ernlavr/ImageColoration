@@ -7,6 +7,7 @@ import time
 import numpy as np
 import pathlib
 import cv2
+from src.Utilities import *
 
 def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   '''Show/save rgb image from grayscale and ab channels
@@ -81,6 +82,7 @@ def train(train_loader, model, criterion, optimizer, epoch, device, brk):
 
     # Run forward pass
     output_ab = model(input_gray) 
+    
     loss = criterion(output_ab, input_ab) 
     losses.update(loss.item(), input_gray.size(0))
 
@@ -123,10 +125,13 @@ def validate(val_loader, model, criterion, save_images, epoch, device):
     target = target.to(device)
     input_gray = input_gray.to(device)
     input_ab = input_ab.to(device)   
+    showTensor(input_gray, input_ab)
 
 
     # Run model and record loss
     output_ab = model(input_gray) # throw away class predictions
+    showTensor(input_gray, output_ab)
+    compareTwoTensors(input_ab, output_ab)
     loss = criterion(output_ab, input_ab)
     losses.update(loss.item(), input_gray.size(0))
 
