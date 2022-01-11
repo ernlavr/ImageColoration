@@ -17,16 +17,7 @@ def to_rgb(grayscale_input, ab_input, save_path=None, save_name=None):
   pathlib.Path(save_path['colorized']).mkdir(parents=True, exist_ok=True) 
 
   # Converts tensors to numpy arrays
-  npGray = grayscale_input.numpy()
-  npAB = ab_input.numpy()
-
-  # Merge luminance/chrominance
-  LAB = np.concatenate((npGray, npAB), axis=0) 
-  LAB = LAB.transpose((1, 2, 0)) # Shifts it from (3, 256, 256) to (256, 256, 3)
-
-  # Convert to RGB colorspace and normalize (cv2.imwrite requires integers 0-255)
-  RGB = cv2.cvtColor(LAB, cv2.COLOR_LAB2BGR)
-  RGB = RGB/(RGB.max()/255.0)
+  RGB = getTensConverted(grayscale_input, ab_input)
 
   if save_path is not None and save_name is not None: 
     # Export image

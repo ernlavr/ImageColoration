@@ -7,7 +7,7 @@ def getStacked(L, AB):
     RGB = cv2.cvtColor(merged, cv2.COLOR_LAB2BGR)
     return RGB
 
-def getTensConverted(L, AB):
+def getTensConverted(L : torch.Tensor, AB : torch.Tensor):
     lScaled = np.moveaxis(L.numpy()*255, 0, -1).astype(np.uint8)
     abScaled = np.moveaxis(AB.numpy()*255, 0, -1).astype(np.uint8)
     return getStacked(lScaled, abScaled)
@@ -24,11 +24,9 @@ def compareTwoTensors(t1, t2):
     print(t2 - t1)
 
 
-def showTensor(L, AB):
-    # lConv = L.numpy()
-    # lConv = lConv.transpose((1, 2, 0))
-    max = torch.max(AB)
-    min = torch.min(AB)
+def rescaleTensor(L, AB):
+    L = L.cpu()
+    AB = AB.cpu()
 
     lScaled :np.ndarray = np.moveaxis(L.numpy()*255, 0, -1).astype(np.uint8)
     abNumpy = AB.numpy() * 255
@@ -40,10 +38,23 @@ def showTensor(L, AB):
     lScaled = lScaled.transpose((1, 2, 0))
     abScaled = abInt[:, :, :, 0]
     abScaled = abScaled.transpose((1, 2, 0))
+    return lScaled, abScaled
 
+def getTensorRGB(L : torch.Tensor, AB : torch.Tensor):
+    lScaled, abScaled = rescaleTensor(L, AB)
+    return getImgLab(lScaled, abScaled)
+
+def getImgLab(L, AB):
+    merged = np.dstack((L, AB)) 
+    return cv2.cvtColor(merged, cv2.COLOR_LAB2BGR)
+
+def showTensor(L : torch.Tensor, AB : torch.Tensor):
+    # lConv = L.numpy()
+    # lConv = lConv.transpose((1, 2, 0))
+    
+    lScaled, abScaled = rescaleTensor(L, AB)
     showImgLab(lScaled, abScaled)
     
-
 def showImgLab(L, AB):
     merged = np.dstack((L, AB)) 
     RGB = cv2.cvtColor(merged, cv2.COLOR_LAB2BGR)
