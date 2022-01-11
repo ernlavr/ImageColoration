@@ -2,7 +2,7 @@
 Consists of utility functions for running the training/validation, 
 conversion to RGB and analytics
 """
-
+import datetime
 import time
 import numpy as np
 import pathlib
@@ -87,12 +87,12 @@ def train(train_loader, model, criterion, optimizer, epoch, device, brk):
     end = time.time()
 
     # Print model accuracy -- in the code below, val refers to value, not validation
-    print('Epoch: [{0}][{1}/{2}]\t'
-        'Time {batch_time.val:.3f} ({batch_time.avg:.3f})\t'
-        'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
-        'Loss {loss.val:.4f} ({loss.avg:.4f})\t'.format(
-            epoch, i, len(train_loader), batch_time=batch_time,
-            data_time=data_time, loss=losses)) 
+    currTime = datetime.datetime.now().strftime('%H:%M:%S.%f')[:-4]
+    toLog = (currTime + ' Epoch: [{0}][{1}/{2}] Time {batch_time.val:.3f} ({batch_time.avg:.3f}) Data {data_time.val:.3f} ({data_time.avg:.3f}) Loss {loss.val:.4f} ({loss.avg:.4f})\n'.format(epoch, i, len(train_loader), batch_time=batch_time, data_time=data_time, loss=losses)) 
+
+    print(toLog)
+    with open('log.txt', 'a+') as file:
+      file.write(toLog)
     
     # For quick debugging on CPU..
     if(brk and i == 1):
