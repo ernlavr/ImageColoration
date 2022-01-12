@@ -1,6 +1,12 @@
-import cv2
 import numpy as np
 import torch
+import cv2
+
+def showSubtracted(img1, img2):
+    difference = cv2.subtract(img1, img2)
+    cv2.imshow("Original", difference)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 def getStacked(L, AB):
     merged = np.dstack((L, AB)) 
@@ -23,23 +29,28 @@ def compareTwoTensors(t1, t2):
 
     print(t2 - t1)
 
+def convertTensorToCV(img):
+    imgConverted :np.ndarray = np.moveaxis(img.numpy()*255, 0, -1).astype(np.uint8)
+    imgConverted = imgConverted[:, :, :, 0]
+    return imgConverted.transpose((1, 2, 0))
+
 
 def showTensor(L, AB):
     # lConv = L.numpy()
     # lConv = lConv.transpose((1, 2, 0))
     max = torch.max(AB)
     min = torch.min(AB)
-
-    lScaled :np.ndarray = np.moveaxis(L.numpy()*255, 0, -1).astype(np.uint8)
-    abNumpy = AB.numpy() * 255
-    abMoved = np.moveaxis(abNumpy, 0, -1)
-    abInt = abMoved.astype(np.uint8)
     
 
-    lScaled = lScaled[:, :, :, 0]
-    lScaled = lScaled.transpose((1, 2, 0))
-    abScaled = abInt[:, :, :, 0]
-    abScaled = abScaled.transpose((1, 2, 0))
+    lScaled = convertTensorToCV(L)
+    abScaled = convertTensorToCV(AB)
+
+    arr1 = abScaled[:, :, 0]
+    arr2 = abScaled[:, :, 1]
+    
+    result = (arr1 == arr2).all()
+    result = (arr1 == lScaled).all()
+    result = (arr2 == lScaled).all()
 
     showImgLab(lScaled, abScaled)
     
@@ -47,6 +58,11 @@ def showTensor(L, AB):
 def showImgLab(L, AB):
     merged = np.dstack((L, AB)) 
     RGB = cv2.cvtColor(merged, cv2.COLOR_LAB2BGR)
+    R = RGB[:, :, 0]
+    G = RGB[:, :, 1]
+    B = RGB[:, :, 2]
+    RGB = np.asarray([R, G, B], dtype=np.uint8)
+    RGB = RGB.transpose((1, 2, 0))
     showImg(RGB)
 
 def showImg(RGB):

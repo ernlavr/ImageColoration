@@ -127,11 +127,9 @@ def validate(val_loader, model, criterion, save_images, epoch, device):
     input_ab = input_ab.to(device)   
     showTensor(input_gray, input_ab)
 
-
     # Run model and record loss
     output_ab = model(input_gray) # throw away class predictions
     showTensor(input_gray, output_ab)
-    compareTwoTensors(input_ab, output_ab)
     loss = criterion(output_ab, input_ab)
     losses.update(loss.item(), input_gray.size(0))
 
